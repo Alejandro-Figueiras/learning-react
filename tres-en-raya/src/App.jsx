@@ -1,52 +1,15 @@
 import { useState } from 'react'
 import './App.css'
-
-const TURNS = {
-  X: "x",
-  O: "o"
-}
-
-
-const Square = ({children, isSelected, updateBoard, index}) => {
-  const handleClick = (e) => {
-    updateBoard(index)
-  }
-  
-  return (
-    <div onClick={handleClick} className={`square ${isSelected?'is-selected':''}`}>
-      {children}
-    </div>
-  )
-}
-
-const winnerCombos = [
-  [0,1,2],
-  [3,4,5],
-  [6,7,8],
-  [0,3,6],
-  [1,4,7],
-  [2,5,8],
-  [0,4,8],
-  [2,4,6]
-]
+import confetti from 'canvas-confetti'
+import Square from './components/Square'
+import { TURNS } from './constants'
+import { checkWinner } from './logic/board'
+import WinnerModal from './components/WinnerModal'
 
 const App = () => {
   const [board, setBoard] = useState(Array(9).fill(null))
   const [turn, setTurn] = useState(TURNS.X);
   const [winner, setWinner] = useState(null);
-
-  const checkWinner = (boardToCheck) => {
-    for (const [a,b,c] of winnerCombos) {
-      if (
-        boardToCheck[a] &&
-        boardToCheck[a] === boardToCheck[b] &&
-        boardToCheck[a] === boardToCheck[c]
-      ) {
-        return boardToCheck[a];
-      }
-    }
-    return null;
-  }
 
   const updateBoard = (index) => {
     if (board[index] || winner) return;
@@ -60,14 +23,23 @@ const App = () => {
 
     const newWinner = checkWinner(newBoard);
     if (newWinner) {
-      alert(`Ganó ${newWinner}`)
       setWinner(newWinner)
+      confetti()
+    } else if (!newBoard.includes(null)) {
+      setWinner(false)
     }
+  }
+
+  const resetGame = () => {
+    setBoard(Array(9).fill(null));
+    setTurn(TURNS.X)
+    setWinner(null)
   }
 
   return (
     <main className='board'>
       <h1>Tic Tac Toe</h1>
+      <button onClick={resetGame}>Reset</button>
       <section className="game">
         {
           board.map((_, index) => {
@@ -87,6 +59,8 @@ const App = () => {
         <Square isSelected={TURNS.X == turn}>{TURNS.X}</Square>
         <Square isSelected={TURNS.O == turn}>{TURNS.O}</Square>
       </section>
+
+      <WinnerModal resetGame={resetGame} winner={winner}/>
     </main>
   )
 }
