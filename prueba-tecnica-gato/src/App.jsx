@@ -1,35 +1,13 @@
-import { useEffect, useState } from "react"
+import useCatImage from "./hooks/useCatImage"
+import useCatFact from "./hooks/useCatFact"
 
 const App = () => {
-  
-  const [fact, setFact] = useState(null)
-  const [imageUrl, setImageUrl] = useState(null)
-
-  useEffect(() => {
-    fetch('https://catfact.ninja/fact')
-      .then(res => res.json())
-      .then(data => {
-        const fact = data.fact;
-        setFact(fact)
-        
-      })
-  }, [])
-
-  useEffect(() => {
-    if (!fact) return;
-    
-    const initialWords = fact.split(" ").slice(0,3).join(" ");
-
-    fetch(`https://cataas.com/cat/says/${initialWords}?size=50`)
-      .then(res => res.json())
-      .then(data => {
-        console.log(data)
-        setImageUrl(`https://cataas.com/cat/says/${initialWords}`)
-      })
-  }, [fact])
+  const { fact, refreshFact } = useCatFact()
+  const { imageUrl } = useCatImage({fact})
 
   return (
     <main>
+      <button onClick={refreshFact}>Get new Fact</button>
       {fact && <p>{fact}</p>}
       {imageUrl && <img alt={`Image extracted using three first three words for ${fact}`} src={imageUrl} />}
     </main>
