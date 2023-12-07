@@ -1,33 +1,39 @@
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState, useMemo } from "react"
 import { fetchMovies } from "../services/movies"
 
-export function useMovies() {
+export function useMovies({ sort }) {
   const [movies, setMovies ] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const busquedaAnterior = useRef('');
 
-  const getMovies = async(search) => {
-    if (search == busquedaAnterior.current) return
-
-    try {
-      setLoading(true)
-      setError(null);
-      busquedaAnterior.current = search
-      if (search) {
-        setMovies(await fetchMovies(search))
-      } else {
-        setMovies([])
+  const getMovies = useMemo(() => {
+    return async(search) => {
+      if (search == busquedaAnterior.current) return
+  
+      try {
+        setLoading(true)
+        setError(null);
+        busquedaAnterior.current = search
+        if (search) {
+          setMovies(await fetchMovies(search))
+        } else {
+          setMovies([])
+        }
+      } catch (e) {
+        setError(e.message)
+      } finally {
+        setLoading(false)
       }
-    } catch (e) {
-      setError(e.message)
-    } finally {
-      setLoading(false)
+      
     }
-    
-  }
+  }, [])
 
-  useEffect(() => console.log("movies state updated"), [movies])
+  const sortedMovies = useMemo(() => {
+    return sort
+    ? [...movies].sort((a,b) => a.title.localeCompare(b.title))
+    : movies
+  }, [sort, movies])
 
-  return {movies, getMovies, loading, error }
+  return {movies: sortedMovies, getMovies, loading, error }
 }
