@@ -6,16 +6,22 @@ const API_KEY = "4287ad07"
 
 function App () {
   const { movies } = useMovies()
-  
   const hasMovies = movies?.length > 0;
- 
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const fields = Object.fromEntries(new FormData(e.target));
+    const query = fields.query;
+    console.log(query)
+    
+  }
   
   return (
     <div className='page'>
       <header>
         <h1>Prueba Técnica: Buscador de Películas</h1>
-        <form className='form'>
-          <input type="text" placeholder='Avengers'/>
+        <form className='form' onSubmit={handleSubmit}>
+          <input name="query" type="text" placeholder='Avengers'/>
           <button>Buscar</button>
         </form>
       </header>
