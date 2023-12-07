@@ -19,8 +19,9 @@ form {
 
 .movies {
   list-style: none;
-  margin: 0;
+  margin: 20px 0;
   padding: 0;
+
   display: grid;
   width: 100%;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -45,4 +46,6 @@ form {
   margin: 0;
 }
 
-
+.subtext {
+  text-align: center
+}

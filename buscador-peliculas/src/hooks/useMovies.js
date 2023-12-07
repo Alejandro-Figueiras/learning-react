@@ -1,20 +1,29 @@
 import { useEffect, useState } from "react"
 import { fetchMovies } from "../services/movies"
 
-export function useMovies({ search }) {
-  const [movies, setMovies ] = useState([])
+export function useMovies() {
+  const [movies, setMovies ] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const getMovies = async() => {
-    console.log("ASDASD")
-    if (search) {
-      setMovies(await fetchMovies(search))
-    } else {
-      setMovies([])
+  const getMovies = async(search) => {
+    try {
+      setLoading(true)
+      setError(null);
+      if (search) {
+        setMovies(await fetchMovies(search))
+      } else {
+        setMovies([])
+      }
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setLoading(false)
     }
-    console.log("SIUUUUUUU")
+    
   }
 
   useEffect(() => console.log("movies state updated"), [movies])
 
-  return {movies, getMovies}
+  return {movies, getMovies, loading, error }
 }

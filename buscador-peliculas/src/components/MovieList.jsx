@@ -6,7 +6,7 @@ const MovieList = ({ movies = [] }) => {
   return (
     <ul className='movies'>
       {
-        !hasMovies && <p>No hay peliculas disponibles</p>
+        !hasMovies && <p className='subtext'>No hay peliculas disponibles</p>
       }
       {
         movies.map(movie => (
