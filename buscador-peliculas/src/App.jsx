@@ -1,19 +1,18 @@
+import { useState } from 'react';
 import './App.css'
 import MovieList from './components/MovieList'
 import { useMovies } from './hooks/useMovies';
 
-const API_KEY = "4287ad07"
-
 function App () {
-  const { movies } = useMovies()
-  const hasMovies = movies?.length > 0;
+  const [ search, setSearch ] = useState("")
+  const { movies, getMovies } = useMovies({search})
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const fields = Object.fromEntries(new FormData(e.target));
     const query = fields.query;
-    console.log(query)
-    
+    setSearch(query)
+    getMovies()
   }
   
   return (
@@ -26,11 +25,7 @@ function App () {
         </form>
       </header>
       <main>
-        {
-          hasMovies 
-          ? <MovieList movies={movies}/ >
-          :(<p>No se encuentran peliculas</p>)
-        }
+        <MovieList movies={movies}/ >
       </main>
     </div>
   )

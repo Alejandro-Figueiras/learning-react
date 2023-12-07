@@ -1,8 +1,13 @@
 import PropTypes from 'prop-types';
 
 const MovieList = ({ movies = [] }) => {
+  console.log(movies)
+  const hasMovies = movies?.length > 0;
   return (
     <ul className='movies'>
+      {
+        !hasMovies && <p>No hay peliculas disponibles</p>
+      }
       {
         movies.map(movie => (
           <li key={movie.id} className='movie'>
